@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+
+const os = require("os");
+const platform = os.platform();
+const path = require("path");
+const fs = require("fs");
+const { execSync } = require("child_process");
+
+// 工作区路径
+const workDir = path.resolve(__dirname.replace(/(\/|\\)scripts$/g, ""));
+
+// 获取当前提交的 commit msg
+const msg = fs.readFileSync(process.argv[2], "utf-8").trim();
+const msgType = "build|ci|chore|docs|feat|fix|perf|refactor|revert|style|test";
+const msgScope = "dto|core|service|dao|sql|api|component|config|constant|data|directive|filter|lib|router|store|util|view";
+const msgRegExp = new RegExp(`^(${msgType})\\((all|other|${msgScope})(\\|(${msgScope}))*\\):\\s.{1,100}`);
+
+if (!msgRegExp.test(msg)) {
+  console.log("不合法的 commit 消息提交格式，请使用正确的格式：");
+  console.log("> feat(router|view): 新增了系统配置界面");
+  console.log("> fix(view): 修复了无法登录的问题");
+  console.log("详情请查看 git commit 提交规范：https://lescity.yuque.com/cfud8v/iw3m4h/yvp6rm");
+  // 异常退出
+  process.exit(1);
+}

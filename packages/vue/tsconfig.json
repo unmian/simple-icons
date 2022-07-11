@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "useDefineForClassFields": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "utils": ["src/utils/index.ts"],
+      "utils/*": ["src/utils/*"],
+      "data": ["src/data/index.ts"],
+      "data/*": ["src/data/*"]
+    },
+    "types": ["vite/client"]
+  },
+  "vueCompilerOptions": {
+    "target": 2
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.d.tsx", "src/**/*.vue", "types/**/*.d.ts"]
+}

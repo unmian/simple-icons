@@ -1,0 +1,140 @@
+kind: pipeline
+type: docker
+name: default
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: init
+    image: io.hub-mirror.lescity.com.cn:80/bash
+    environment:
+      PROJECT_NAME:
+        from_secret: PROJECT_NAME
+      OSS_ENABLE:
+        from_secret: OSS_ENABLE
+      PROJECT_OSS:
+        from_secret: PROJECT_OSS
+      OSS_KEY:
+        from_secret: OSS_KEY
+      OSS_SECRET:
+        from_secret: OSS_SECRET
+      DEPLOY_KEY:
+        from_secret: DEPLOY_KEY
+      DEPLOY_SECRET:
+        from_secret: DEPLOY_SECRET
+      DINGTALK:
+        from_secret: DINGTALK
+    commands:
+      - bash scripts/init.sh
+
+  - name: test
+    image: io.hub-mirror.lescity.com.cn:80/node:16
+    commands:
+      - echo '172.19.23.2 io.npm.lescity.com.cn' >> /etc/hosts
+      - yarn config set registry http://io.npm.lescity.com.cn
+      - yarn install
+      - yarn run lint
+    when:
+      branch:
+        - dev
+
+  - name: build:stage
+    image: io.hub-mirror.lescity.com.cn:80/node:16
+    commands:
+      - echo '172.19.23.2 io.npm.lescity.com.cn' >> /etc/hosts
+      - yarn config set registry http://io.npm.lescity.com.cn
+      - yarn install
+      - yarn run build:stage
+    when:
+      branch:
+        - stage
+
+  - name: build:release
+    image: io.hub-mirror.lescity.com.cn:80/node:16
+    commands:
+      - echo '172.19.23.2 io.npm.lescity.com.cn' >> /etc/hosts
+      - yarn config set registry http://io.npm.lescity.com.cn
+      - yarn install
+      - yarn run build:release
+    when:
+      branch:
+        - release
+
+  - name: download
+    image: io.hub-mirror.lescity.com.cn:80/minio-client
+    environment:
+      MINIO_HOST: https://fs.leswx.cn
+      PROJECT_OSS:
+        from_secret: PROJECT_OSS
+    commands:
+      - echo "172.19.23.2 fs.leswx.cn" >> /etc/hosts
+      - mc config host add minio "$MINIO_HOST" "" "" --api s3v4
+      - mc cp -r "minio/public/$PROJECT_OSS" .
+      - mv "$PROJECT_OSS" dist/oss
+    when:
+      branch:
+        - stage
+        - release
+
+  - name: zip
+    image: io.hub-mirror.lescity.com.cn:80/easy-zip
+    environment:
+      ZIP_DIR: dist
+      ZIP_SOURCE: .
+      ZIP_NAME:
+        from_secret: PROJECT_NAME
+    when:
+      branch:
+        - stage
+        - release
+
+  - name: publish:stage
+    image: io.hub-mirror.lescity.com.cn:80/minio-client
+    environment:
+      MINIO_HOST: https://io.deploy.lescity.com.cn
+      MINIO_ACCESS_KEY:
+        from_secret: DEPLOY_KEY
+      MINIO_ACCESS_SECRET:
+        from_secret: DEPLOY_SECRET
+      PROJECT_NAME:
+        from_secret: PROJECT_NAME
+    commands:
+      - echo "172.19.23.2 io.deploy.lescity.com.cn" >> /etc/hosts
+      - mc config host add minio "$MINIO_HOST" "$MINIO_ACCESS_KEY" "$MINIO_ACCESS_SECRET" --api s3v4
+      - mc cp "$PROJECT_NAME.zip" "minio/deploy/$PROJECT_NAME-stage.zip"
+    when:
+      branch:
+        - stage
+
+  - name: publish:release
+    image: io.hub-mirror.lescity.com.cn:80/minio-client
+    environment:
+      MINIO_HOST: https://io.deploy.lescity.com.cn
+      MINIO_ACCESS_KEY:
+        from_secret: DEPLOY_KEY
+      MINIO_ACCESS_SECRET:
+        from_secret: DEPLOY_SECRET
+      PROJECT_NAME:
+        from_secret: PROJECT_NAME
+    commands:
+      - echo "172.19.23.2 io.deploy.lescity.com.cn" >> /etc/hosts
+      - mc config host add minio "$MINIO_HOST" "$MINIO_ACCESS_KEY" "$MINIO_ACCESS_SECRET" --api s3v4
+      - mc cp "$PROJECT_NAME.zip" "minio/deploy/$PROJECT_NAME-release.zip"
+    when:
+      branch:
+        - release
+
+  - name: notify
+    image: lddsb/drone-dingtalk-message
+    settings:
+      token:
+        from_secret: DINGTALK
+      type: markdown
+
+trigger:
+  branch:
+    - dev
+    - stage
+    - release

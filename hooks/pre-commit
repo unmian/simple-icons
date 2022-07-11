@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+
+const os = require("os");
+const platform = os.platform();
+const path = require("path");
+const fs = require("fs");
+const { execSync } = require("child_process");
+
+// 工作区路径
+const workDir = path.resolve(__dirname.replace(/(\/|\\)scripts$/g, ""));
+
+// 检测分支
+try {
+  const name = execSync(`git config user.name`, {
+    cwd: workDir,
+    encoding: "utf8",
+  }).toString().trim();
+  const email = execSync(`git config user.email`, {
+    cwd: workDir,
+    encoding: "utf8",
+  }).toString().trim();
+  const branchName = execSync(`git symbolic-ref --short -q HEAD`, {
+    cwd: workDir,
+    encoding: "utf8",
+  }).toString().trim();
+  if (!email.includes("shiruihua") && name !== "Quarter") {
+    if (branchName === "release" || branchName === "stage") {
+      console.log(`当前分支【${branchName}】仅对特定人员开放`);
+      process.exit(1);
+    }
+  }
+} catch (e) {
+  console.log(e.stdout.toString());
+  process.exit(1);
+}
+
+try {
+  const result = execSync(`yarn run test`, {
+    cwd: workDir,
+    encoding: "utf8",
+  }).toString();
+  console.log(result)
+} catch (e) {
+  console.log(e.stdout.toString());
+  process.exit(1);
+}

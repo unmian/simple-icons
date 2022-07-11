@@ -1,0 +1,20 @@
+/*
+ * @Author: Quarter
+ * @Date: 2022-06-21 08:51:53
+ * @LastEditors: Quarter
+ * @LastEditTime: 2022-06-21 08:54:14
+ * @FilePath: /simple-icons/packages/vue/src/style/style.css
+ * @Description: 样式文件
+ */
+
+.s-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}
+
+.s-icon::before {
+  font-family: unset;
+}
