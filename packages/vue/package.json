@@ -1,6 +1,6 @@
 {
-  "name": "@quarter/simple-icons",
-  "version": "0.0.1",
+  "name": "@unmian/simple-icons",
+  "version": "0.1.0",
   "author": {
     "name": "Quarter",
     "email": "master@shiruihua.cn"
@@ -38,13 +38,11 @@
     "dev": "vite --config ./build/base.config.ts",
     "lint": "f2elint scan",
     "test": "vue-tsc --skipLibCheck --noEmit",
-    "build": "vue-tsc --skipLibCheck --noEmit && vite build",
     "preview": "vite preview",
-    "update:deps": "node ./scripts/update.deps",
-    "publish:private": "npm publish --registry https://npm.lescity.com.cn/",
-    "unpublish:private": "npm unpublish --force --registry https://npm.lescity.com.cn/"
+    "prepublishOnly": "vue-tsc --skipLibCheck --noEmit && vite build",
+    "publish:private": "pnpm publish --no-git-checks --registry https://npm.lescity.com.cn/",
+    "unpublish:private": "pnpm unpublish --force --registry https://npm.lescity.com.cn/"
   },
-  "peerDependencies": {},
   "devDependencies": {
     "@types/node": "^18.0.1",
     "@vue/compiler-sfc": "^3.2.37",
@@ -57,13 +55,12 @@
     "vite": "^2.9.13",
     "vite-plugin-dts": "^1.2.1",
     "vite-plugin-vue2": "^2.0.1",
-    "vue": "^2.7.2",
+    "vue": "^2.7.14",
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",
-    "vue-template-compiler": "^2.7.2",
+    "vue-template-compiler": "^2.7.14",
     "vue-tsc": "^0.38.2"
   },
-  "dependencies": {},
   "browserslist": [
     "> 0.5%",
     "last 2 versions",

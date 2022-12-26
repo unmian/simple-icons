@@ -1,16 +1,26 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "useDefineForClassFields": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "strict": true,
-    "jsx": "preserve",
+    "baseUrl": ".",
     "sourceMap": true,
-    "resolveJsonModule": true,
+    "target": "ES5",
+    "useDefineForClassFields": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "strict": true,
+    "declaration": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "noUnusedLocals": true,
     "esModuleInterop": true,
-    "lib": ["esnext", "dom", "dom.iterable"],
-    "baseUrl": "."
+    "skipLibCheck": true,
+    "lib": ["ESNext"]
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules"],
+  "ts-node": {
+    "esm": true,
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
   }
 }

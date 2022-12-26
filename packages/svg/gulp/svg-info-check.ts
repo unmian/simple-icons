@@ -2,7 +2,7 @@
  * @Author: Quarter
  * @Date: 2022-06-15 13:55:05
  * @LastEditors: Quarter
- * @LastEditTime: 2022-06-16 16:10:39
+ * @LastEditTime: 2022-12-06 20:28:30
  * @FilePath: /simple-icons/packages/svg/gulp/svg-info-check.ts
  * @Description: SVG 信息检查
  */
@@ -12,7 +12,7 @@ import { createTransformStream } from "../../../gulp/transform";
 import { camelCase } from "../../../gulp/utils/camelCase";
 
 export interface Attrs {
-  [key: string]: string | object;
+  [key: string]: string | number | object | undefined;
   style: { [key: string]: any } | string;
 }
 

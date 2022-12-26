@@ -2,7 +2,7 @@
  * @Author: Quarter
  * @Date: 2022-06-15 12:18:53
  * @LastEditors: Quarter
- * @LastEditTime: 2022-06-17 10:07:09
+ * @LastEditTime: 2022-12-06 19:58:30
  * @FilePath: /simple-icons/packages/svg/gulp/index.ts
  * @Description: 入口文件
  */
@@ -18,6 +18,7 @@ import {
   useItemTemplate,
   useWrapperTemplate,
 } from "./template";
+import { filterFileName } from "./transform";
 
 export interface GenerateIconOptions {
   from: string[];
@@ -47,6 +48,8 @@ export const generateIconsTask = ({
       .pipe(svgToElement(options))
       .pipe(
         rename((file) => {
+          // eslint-disable-next-line no-param-reassign
+          file = filterFileName(file);
           if (file.basename) {
             // eslint-disable-next-line no-param-reassign
             file.extname = ".json";
@@ -57,11 +60,11 @@ export const generateIconsTask = ({
       .pipe(useTemplate(iconGenerator))
       .pipe(
         rename((file) => {
+          // eslint-disable-next-line no-param-reassign
+          file = filterFileName(file);
           if (file.basename) {
             // eslint-disable-next-line no-param-reassign
             file.extname = extName;
-            // eslint-disable-next-line no-param-reassign
-            file.basename = file.basename.toLocaleLowerCase();
           }
         }),
       )

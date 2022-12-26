@@ -2,7 +2,7 @@
  * @Author: Quarter
  * @Date: 2022-06-20 16:45:58
  * @LastEditors: Quarter
- * @LastEditTime: 2022-07-08 14:14:41
+ * @LastEditTime: 2022-11-15 11:48:51
  * @FilePath: /simple-icons/packages/vue/src/iconfont/index.ts
  * @Description: 字体图标组件
  */
@@ -15,7 +15,7 @@ import { CDN_BASE_URL, ICON_NAMESPACE, ICON_VERSION } from "../../../../config";
 const CDN_ICONFONT_URL = `${CDN_BASE_URL}/simple-ui/icon/${ICON_VERSION}/iconfont.css`;
 
 // Iconfont 组件
-const Iconfont = Vue.extend({
+export const Iconfont = Vue.extend({
   name: "SIconfont",
   props: {
     // 颜色

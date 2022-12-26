@@ -2,7 +2,7 @@
  * @Author: Quarter
  * @Date: 2022-06-20 17:45:27
  * @LastEditors: Quarter
- * @LastEditTime: 2022-07-05 16:36:03
+ * @LastEditTime: 2022-12-06 20:16:11
  * @FilePath: /simple-icons/packages/vue/gulp/template.ts
  * @Description: 模板转换
  */
@@ -14,10 +14,7 @@ import { createTransformStream } from "../../../gulp/transform";
 
 export type VueGetIconFileContent = (props: { name: string; element: string }) => string;
 
-const template = fs.readFileSync(
-  path.resolve(__dirname, "../template/icon.template.ts"),
-  "utf-8",
-);
+const template = fs.readFileSync(path.resolve(__dirname, "../template/icon.template.ts"), "utf-8");
 
 /**
  * @description: vue 组件生成模板
@@ -34,9 +31,18 @@ export const useTemplate = (vueGetIconFileContent: VueGetIconFileContent) =>
  * @return {internal.Transform}
  */
 export const useItemTemplate = () =>
-  createTransformStream(
-    (_, { stem: name }) => `  { stem: "${name}", icon: "${camelCase(name, { complete: true })}" },`,
-  );
+  createTransformStream((_, { stem: name, dirname }) => {
+    const dir = dirname
+      .replace(path.resolve(__dirname, "../../svg/dist/ast/"), "")
+      .replace(/^[^0-9a-zA-Z]+/g, "")
+      .replace(/[^0-9a-zA-Z]+/g, "-");
+    return `  { group: ${`"${camelCase(dir, { complete: true })}"` || "null"}, icon: "${camelCase(
+      name,
+      {
+        complete: true,
+      },
+    )}", name: "${name}" },`;
+  });
 
 /**
  * @description: 生成外层数据结构
@@ -60,7 +66,7 @@ export default mainfest;
 export const useEntryItemTemplate = () =>
   createTransformStream(
     (_, { stem: name }) =>
-      `export { default as ${camelCase(name, {
+      `export { default as Icon${camelCase(name, {
         complete: true,
       })} } from "./components/${name}";`,
   );
